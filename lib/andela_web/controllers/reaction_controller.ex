@@ -14,7 +14,7 @@
 
     def count(conn, %{"content_id" => content_id}) do
       content = content_id
-      if Cache.get(content) == [] do
+      if Cache.get(content) == nil do
         render(conn, AndelaWeb.ErrorView, "400.json")
       else
         user = Cache.get(content)
