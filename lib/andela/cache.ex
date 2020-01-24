@@ -5,8 +5,8 @@ defmodule Andela.Cache do
     GenServer.start_link(__MODULE__, %{}, name: AndelaCache)
 
   end
-  def delete(key) do
-    GenServer.cast(AndelaCache, {:delete, key})
+  def delete(key, data) do
+    GenServer.cast(AndelaCache, {:delete, key, data})
   end
 
   def get(key) do
@@ -30,8 +30,8 @@ defmodule Andela.Cache do
     {:noreply, state}
   end
 
-  def handle_cast({:delete, key}, state) do
-    :ets.delete(:user_cache, key)
+  def handle_cast({:delete, key, data}, state) do
+    :ets.delete_object(:user_cache, {key, data})
     {:noreply, state}
   end
 
