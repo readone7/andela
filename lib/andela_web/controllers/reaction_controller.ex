@@ -14,17 +14,24 @@
 
     def count(conn, %{"content_id" => content_id}) do
       content = content_id
-      if Cache.get(content) == nil do
-        render(conn, AndelaWeb.ErrorView, "400.json")
-      else
-        user = Cache.get(content)
-        unique_users = Enum.uniq(user)
+      case Cache.get(content) do
+        nil -> render(conn, AndelaWeb.ErrorView, "400.json")
+        [head|tail] ->
+        users = Cache.get(content)
+        unique_users = Enum.uniq(users)
         reaction_count = %{"fire"=>Enum.count(unique_users)}
         values = %{
           "content_id"=> content_id,
           "reaction_count"=> reaction_count
         }
         render(conn, "count.json", values: values)
+        _ ->
+          reaction_count = %{"fire"=> 1}
+          values = %{
+            "content_id"=> content_id,
+            "reaction_count"=> reaction_count
+          }
+          render(conn, "count.json", values: values)
       end
     end
   end
